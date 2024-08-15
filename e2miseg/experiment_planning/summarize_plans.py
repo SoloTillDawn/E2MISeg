@@ -1,5 +1,4 @@
 from batchgenerators.utilities.file_and_folder_operations import *
-from e2miseg.paths import preprocessing_output_dir
 
 def summarize_plans(file):
     plans = load_pickle(file)

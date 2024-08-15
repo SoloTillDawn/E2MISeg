@@ -1,4 +1,4 @@
-name: unetr_pp
+name: e2miseg
 channels:
   - defaults
 dependencies:

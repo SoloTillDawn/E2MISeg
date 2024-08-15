@@ -1,11 +1,10 @@
 from copy import deepcopy
-
 import numpy as np
 from e2miseg.experiment_planning.experiment_planner_baseline_3DUNet_v21 import \
     ExperimentPlanner3D_v21
 from e2miseg.experiment_planning.common_utils import get_pool_and_conv_props
 from e2miseg.network_architecture.generic_UNet import Generic_UNet
-from e2miseg.paths import *
+
 
 
 class ExperimentPlanner3D_v21_11GB(ExperimentPlanner3D_v21):

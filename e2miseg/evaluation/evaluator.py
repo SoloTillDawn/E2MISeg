@@ -13,34 +13,28 @@ from collections import OrderedDict
 
 
 class Evaluator:
-    """Object that holds test and reference segmentations with label information
-    and computes a number of metrics on the two. 'labels' must either be an
-    iterable of numeric values (or tuples thereof) or a dictionary with string
-    names and numeric values.
-    """
 
     default_metrics = [
-        "False Positive Rate",
+        # "False Positive Rate",
         "Dice",
         "Jaccard",
         "Precision",
         "Recall",
         "Accuracy",
-        "False Omission Rate",
-        "Negative Predictive Value",
-        "False Negative Rate",
-        "True Negative Rate",
-        "False Discovery Rate",
-        "Total Positives Test",
-        "Total Positives Reference",
-        "Hausdorff Distance 95"
+        # "False Omission Rate",
+        # "Negative Predictive Value",
+        # "False Negative Rate",
+        # "True Negative Rate",
+        # "False Discovery Rate",
+        # "Total Positives Test",
+        # "Total Positives Reference",
         # "Avg. Surface Distance",
         # "Avg. Symmetric Surface Distance"
     ]
 
     default_advanced_metrics = [
         #"Hausdorff Distance",
-        "Hausdorff Distance 95",
+        # "Hausdorff Distance 95",
         #"Avg. Surface Distance",
         #"Avg. Symmetric Surface Distance"
     ]
@@ -85,20 +79,12 @@ class Evaluator:
                 self.construct_labels()
 
     def set_test(self, test):
-        """Set the test segmentation."""
-
         self.test = test
 
     def set_reference(self, reference):
-        """Set the reference segmentation."""
-
         self.reference = reference
 
     def set_labels(self, labels):
-        """Set the labels.
-        :param labels= may be a dictionary (int->str), a set (of ints), a tuple (of ints) or a list (of ints). Labels
-        will only have names if you pass a dictionary"""
-
         if isinstance(labels, dict):
             self.labels = collections.OrderedDict(labels)
         elif isinstance(labels, set):
@@ -111,8 +97,6 @@ class Evaluator:
             raise TypeError("Can only handle dict, list, tuple, set & numpy array, but input is of type {}".format(type(labels)))
 
     def construct_labels(self):
-        """Construct label set from unique entries in segmentations."""
-
         if self.test is None and self.reference is None:
             raise ValueError("No test or reference segmentations.")
         elif self.test is None:
@@ -123,8 +107,6 @@ class Evaluator:
         self.labels = list(map(lambda x: int(x), labels))
 
     def set_metrics(self, metrics):
-        """Set evaluation metrics"""
-
         if isinstance(metrics, set):
             self.metrics = list(metrics)
         elif isinstance(metrics, (list, tuple, np.ndarray)):
@@ -133,12 +115,10 @@ class Evaluator:
             raise TypeError("Can only handle list, tuple, set & numpy array, but input is of type {}".format(type(metrics)))
 
     def add_metric(self, metric):
-
         if metric not in self.metrics:
             self.metrics.append(metric)
 
     def evaluate(self, test=None, reference=None, advanced=False, **metric_kwargs):
-        """Compute metrics for segmentations."""
         if test is not None:
             self.set_test(test)
 
@@ -153,9 +133,6 @@ class Evaluator:
 
         self.metrics.sort()
 
-        # get functions for evaluation
-        # somewhat convoluted, but allows users to define additonal metrics
-        # on the fly, e.g. inside an IPython console
         _funcs = {m: ALL_METRICS[m] for m in self.metrics + self.advanced_metrics}
         frames = inspect.getouterframes(inspect.currentframe())
         for metric in self.metrics:
@@ -170,7 +147,6 @@ class Evaluator:
                     raise NotImplementedError(
                         "Metric {} not implemented.".format(metric))
 
-        # get results
         self.result = OrderedDict()
 
         eval_metrics = self.metrics
@@ -219,8 +195,6 @@ class Evaluator:
         return self.result
 
     def to_array(self):
-        """Return result as numpy array (labels x metrics)."""
-
         if self.result is None:
             self.evaluate
 
@@ -240,8 +214,6 @@ class Evaluator:
         return a
 
     def to_pandas(self):
-        """Return result as pandas DataFrame."""
-
         a = self.to_array()
 
         if isinstance(self.labels, dict):
@@ -263,8 +235,6 @@ class NiftiEvaluator(Evaluator):
         super(NiftiEvaluator, self).__init__(*args, **kwargs)
 
     def set_test(self, test):
-        """Set the test segmentation."""
-
         if test is not None:
             self.test_nifti = sitk.ReadImage(test)
             super(NiftiEvaluator, self).set_test(sitk.GetArrayFromImage(self.test_nifti))
@@ -273,8 +243,6 @@ class NiftiEvaluator(Evaluator):
             super(NiftiEvaluator, self).set_test(test)
 
     def set_reference(self, reference):
-        """Set the reference segmentation."""
-
         if reference is not None:
             self.reference_nifti = sitk.ReadImage(reference)
             super(NiftiEvaluator, self).set_reference(sitk.GetArrayFromImage(self.reference_nifti))
@@ -293,7 +261,6 @@ class NiftiEvaluator(Evaluator):
 
 def run_evaluation(args):
     test, ref, evaluator, metric_kwargs = args
-    # evaluate
     evaluator.set_test(test)
     evaluator.set_reference(ref)
     if evaluator.labels is None:
@@ -317,20 +284,6 @@ def aggregate_scores(test_ref_pairs,
                      json_task="",
                      num_threads=2,
                      **metric_kwargs):
-    """
-    test = predicted image
-    :param test_ref_pairs:
-    :param evaluator:
-    :param labels: must be a dict of int-> str or a list of int
-    :param nanmean:
-    :param json_output_file:
-    :param json_name:
-    :param json_description:
-    :param json_author:
-    :param json_task:
-    :param metric_kwargs:
-    :return:
-    """
 
     if type(evaluator) == type:
         evaluator = evaluator()
@@ -352,7 +305,6 @@ def aggregate_scores(test_ref_pairs,
     for i in range(len(all_res)):
         all_scores["all"].append(all_res[i])
 
-        # append score list for mean
         for label, score_dict in all_res[i].items():
             if label in ("test", "reference"):
                 continue
@@ -370,8 +322,6 @@ def aggregate_scores(test_ref_pairs,
             else:
                 all_scores["mean"][label][score] = float(np.mean(all_scores["mean"][label][score]))
 
-    # save to file if desired
-    # we create a hopefully unique id by hashing the entire output dictionary
     if json_output_file is not None:
         json_dict = OrderedDict()
         json_dict["name"] = json_name
@@ -432,13 +382,6 @@ def aggregate_scores_for_experiment(score_file,
 
 
 def evaluate_folder(folder_with_gts: str, folder_with_predictions: str, labels: tuple, **metric_kwargs):
-    """
-    writes a summary.json to folder_with_predictions
-    :param folder_with_gts: folder where the ground truth segmentations are saved. Must be nifti files.
-    :param folder_with_predictions: folder where the predicted segmentations are saved. Must be nifti files.
-    :param labels: tuple of int with the labels in the dataset. For example (0, 1, 2, 3) for Task001_BrainTumour.
-    :return:
-    """
 
     files_gt = subfiles(folder_with_gts, suffix=".nii.gz", join=False)
     files_pred = subfiles(folder_with_predictions, suffix=".nii.gz", join=False)
@@ -449,48 +392,4 @@ def evaluate_folder(folder_with_gts: str, folder_with_predictions: str, labels: 
     res = aggregate_scores(test_ref_pairs, json_output_file=join(folder_with_predictions, "summary.json"),
                            num_threads=8, labels=labels, **metric_kwargs)
     return res
-
-
-def nnformer_evaluate_folder():
-    import argparse
-    parser = argparse.ArgumentParser("Evaluates the segmentations located in the folder pred. Output of this script is "
-                                     "a json file. At the very bottom of the json file is going to be a 'mean' "
-                                     "entry with averages metrics across all cases")
-    parser.add_argument('-ref', required=True, type=str, help="Folder containing the reference segmentations in nifti "
-                                                              "format.")
-    parser.add_argument('-pred', required=True, type=str, help="Folder containing the predicted segmentations in nifti "
-                                                               "format. File names must match between the folders!")
-    parser.add_argument('-l', nargs='+', type=int, required=True, help="List of label IDs (integer values) that should "
-                                                                       "be evaluated. Best practice is to use all int "
-                                                                       "values present in the dataset, so for example "
-                                                                       "for LiTS the labels are 0: background, 1: "
-                                                                       "liver, 2: tumor. So this argument "
-                                                                       "should be -l 1 2. You can if you want also "
-                                                                       "evaluate the background label (0) but in "
-                                                                       "this case that would not gie any useful "
-                                                                       "information.")
-    args = parser.parse_args()
-    return evaluate_folder(args.ref, args.pred, args.l)
-
-if  __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser("Evaluates the segmentations located in the folder pred. Output of this script is "
-                                     "a json file. At the very bottom of the json file is going to be a 'mean' "
-                                     "entry with averages metrics across all cases")
-    parser.add_argument('-ref', required=True, type=str, help="Folder containing the reference segmentations in nifti "
-                                                              "format.")
-    parser.add_argument('-pred', required=True, type=str, help="Folder containing the predicted segmentations in nifti "
-                                                               "format. File names must match between the folders!")
-    parser.add_argument('-l', nargs='+', type=int, required=True, help="List of label IDs (integer values) that should "
-                                                                       "be evaluated. Best practice is to use all int "
-                                                                       "values present in the dataset, so for example "
-                                                                       "for LiTS the labels are 0: background, 1: "
-                                                                       "liver, 2: tumor. So this argument "
-                                                                       "should be -l 1 2. You can if you want also "
-                                                                       "evaluate the background label (0) but in "
-                                                                       "this case that would not gie any useful "
-                                                                       "information.")
-    args = parser.parse_args()
-    evaluate_folder(args.ref, args.pred, args.l)
 

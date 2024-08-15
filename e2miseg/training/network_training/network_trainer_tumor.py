@@ -17,7 +17,7 @@ import sys
 from collections import OrderedDict
 import torch.backends.cudnn as cudnn
 from abc import abstractmethod
-from datetime import datetime
+from datetime import datetimed
 from tqdm import trange
 from e2miseg.utilities.to_torch import maybe_to_torch, to_cuda
 

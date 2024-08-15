@@ -365,10 +365,3 @@ def apply_postprocessing_to_folder(input_folder: str, output_folder: str, for_wh
     res = results.get()
     p.close()
     p.join()
-
-
-if __name__ == "__main__":
-    input_folder = "/hmunet_media/fabian/DKFZ/predictions_Fabian/Liver_and_LiverTumor"
-    output_folder = "/hmunet_media/fabian/DKFZ/predictions_Fabian/Liver_and_LiverTumor_postprocessed"
-    for_which_classes = [(1, 2), ]
-    apply_postprocessing_to_folder(input_folder, output_folder, for_which_classes)

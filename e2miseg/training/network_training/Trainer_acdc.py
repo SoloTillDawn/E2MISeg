@@ -65,11 +65,10 @@ class Trainer_acdc(NetworkTrainer_acdc):
         self.dl_tr = self.dl_val = None
         self.num_input_channels = self.num_classes = self.net_pool_per_axis = self.patch_size = self.batch_size = \
             self.threeD = self.base_num_features = self.intensity_properties = self.normalization_schemes = \
-            self.net_num_pool_op_kernel_sizes = self.net_conv_kernel_sizes = None  # loaded automatically from plans_file
+            self.net_num_pool_op_kernel_sizes = self.net_conv_kernel_sizes = None
         self.basic_generator_patch_size = self.data_aug_params = self.transpose_forward = self.transpose_backward = None
 
         self.batch_dice = batch_dice
-        # self.loss = DC_and_CE_loss({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {})
         self.loss = SSDC_and_CE_loss({'batch_dice': self.batch_dice, 'smooth': 1e-5, 'do_bg': False}, {}, weight_dice=1.45, weight_ce=1.0, class2=False)
 
         self.online_eval_foreground_dc = []
@@ -197,12 +196,6 @@ class Trainer_acdc(NetworkTrainer_acdc):
         self.was_initialized = True
 
     def initialize_network(self):
-        """
-        This is specific to the U-Net and must be adapted for other network architectures
-        :return:
-        """
-        # self.print_to_log_file(self.net_num_pool_op_kernel_sizes)
-        # self.print_to_log_file(self.net_conv_kernel_sizes)
 
         net_numpool = len(self.net_num_pool_op_kernel_sizes)
 

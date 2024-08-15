@@ -26,10 +26,8 @@ def process_label(label):
     return mcl
 
 def test(fold):
-    # Replace None by full path of
-    label_path = " "
-    # Replace None by full path of
-    infer_path = " "
+    label_path = "/"
+    infer_path = "/"
     
     label_files = glob.glob(os.path.join(label_path, 'labels*.nii.gz'))
     infer_files = glob.glob(os.path.join(infer_path, 'images*.nii.gz'))

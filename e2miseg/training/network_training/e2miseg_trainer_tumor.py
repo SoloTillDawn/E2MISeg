@@ -142,8 +142,6 @@ class e2miseg_trainer_tumor(Trainer_tumor):
                              dims=[32, 64, 128, 256],
                              do_ds=True,
                              )
-        #print("self.input_channels", self.input_channels)
-        #print("self.num_classes", self.num_classes)
         if torch.cuda.is_available():
             self.network.cuda()
         self.network.inference_apply_nonlin = softmax_helper

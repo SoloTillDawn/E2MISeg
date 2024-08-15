@@ -168,7 +168,7 @@ class NetworkTrainer_acdc(object):
         for i in val_keys:
             self.dataset_val[i] = self.dataset[i]
 
-    def plot_progress(self):
+    def splot_progress(self):
         """
         Should probably by improved
         :return:

@@ -393,14 +393,6 @@ class e2miseg_trainer_acdc(Trainer_acdc):
             self.dataset_val[i] = self.dataset[i]
 
     def setup_DA_params(self):
-        """
-        - we increase roation angle from [-15, 15] to [-30, 30]
-        - scale range is now (0.7, 1.4), was (0.85, 1.25)
-        - we don't do elastic deformation anymore
-
-        :return:
-        """
-
         self.deep_supervision_scales = [[1, 1, 1]] + list(list(i) for i in 1 / np.cumprod(
             np.vstack(self.net_num_pool_op_kernel_sizes), axis=0))[:-1]
 

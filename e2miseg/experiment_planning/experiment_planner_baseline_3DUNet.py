@@ -1,7 +1,6 @@
 import shutil
 from collections import OrderedDict
 from copy import deepcopy
-
 import e2miseg
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *

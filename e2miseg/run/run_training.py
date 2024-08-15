@@ -19,8 +19,6 @@ torch.backends.cudnn.benchmark = True
 torch.backends.cudnn.enabled = True
 
 
-# to improve the efficiency set the last two true
-
 def main():
     parser = argparse.ArgumentParser()
 
@@ -64,11 +62,11 @@ def main():
     parser.add_argument("--valbest", required=False, default=False, action="store_true",
                         help="hands off. This is not intended to be used")
     parser.add_argument("--fp32", required=False, default=True, action="store_true",
-                        help="disable(禁用) mixed precision training and run old school(老式) fp32")
+                        help="disable(禁用) mixed precision training and run old school fp32")
     parser.add_argument("--val_folder", required=False, default="validation_raw",
                         help="name of the validation folder. No need to use this for most people")
     parser.add_argument("--disable_saving", required=False, action='store_true',
-                        help="If set nnU-Net will not save any parameter files (除了一个临时检查点，将在训练结束时删除)。当您只对结果感兴趣并希望节省一些磁盘空间时，可用于开发")
+                        help="If set nnU-Net will not save any parameter files")
     parser.add_argument("--disable_postprocessing_on_folds", required=False, action='store_true',
                         help="Running postprocessing on each fold only makes sense when developing with nnU-Net and "
                              "closely observing the model performance on specific configurations. You do not need it "
@@ -136,20 +134,10 @@ def main():
     if find_lr:
         trainer.find_lr()
     else:
-        if not validation_only:
-            if args.continue_training:
-                # -c was set, continue a previous training and ignore pretrained weights
-                trainer.load_latest_checkpoint()
-            else:
-                # new training without pretraine weights, do nothing
-                pass
-
-            trainer.run_training()  #  hmunet_trainer_synapse.run_training
+        if valbest:
+            trainer.load_best_checkpoint(train=False)
         else:
-            if valbest:
-                trainer.load_best_checkpoint(train=False)
-            else:
-                trainer.load_final_checkpoint(train=False)
+            trainer.load_final_checkpoint(train=False)
 
         trainer.network.eval()
 

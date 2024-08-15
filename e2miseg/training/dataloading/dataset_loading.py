@@ -201,7 +201,7 @@ class DataLoader3D(SlimDataLoaderBase):
                 properties = load_pickle(self._data[i]['properties_file'])
             case_properties.append(properties)
 
-            # (解压数据)cases are stored as npz, but we require unpack_dataset to be run. This will decompress them into npy which is much faster to access
+            # cases are stored as npz, but we require unpack_dataset to be run. This will decompress them into npy which is much faster to access
             if isfile(self._data[i]['data_file'][:-4] + ".npy"):
                 case_all_data = np.load(self._data[i]['data_file'][:-4] + ".npy", self.memmap_mode)
             else:

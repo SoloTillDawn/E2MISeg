@@ -13,8 +13,6 @@ import shutil
 from multiprocessing import Pool
 from e2miseg.postprocessing.connected_components import load_remove_save, load_postprocessing
 from e2miseg.training.model_restore import load_model_and_checkpoint_files
-from e2miseg.training.network_training.Trainer_acdc import Trainer_acdc
-from e2miseg.training.network_training.Trainer_synapse import Trainer_synapse
 from e2miseg.training.network_training.Trainer_mcl import Trainer_mcl
 
 from e2miseg.utilities.one_hot_encoding import to_one_hot
@@ -22,8 +20,6 @@ from e2miseg.utilities.one_hot_encoding import to_one_hot
 
 def preprocess_save_to_queue(preprocess_fn, q, list_of_lists, output_files, segs_from_prev_stage, classes,
                              transpose_forward):
-    # suppress output
-    # sys.stdout = open(os.devnull, 'w')
 
     errors_in = []
     for i, l in enumerate(list_of_lists):
@@ -56,7 +52,7 @@ def preprocess_save_to_queue(preprocess_fn, q, list_of_lists, output_files, segs
             then be read (and finally deleted) by the Process. save_segmentation_nifti_from_softmax can take either 
             filename or np.ndarray and will handle this automatically"""
             print(d.shape)
-            if np.prod(d.shape) > (2e9 / 4 * 0.85):  # *0.85 just to be save, 4 because float32 is 4 bytes
+            if np.prod(d.shape) > (2e9 / 4 * 0.85):
                 print(
                     "This output is too large for python process-process communication. "
                     "Saving output temporarily to disk")
@@ -74,8 +70,6 @@ def preprocess_save_to_queue(preprocess_fn, q, list_of_lists, output_files, segs
         print("These cases were ignored.")
     else:
         print("This worker has ended successfully, no errors to report")
-    # restore output
-    # sys.stdout = sys.__stdout__
 
 
 def preprocess_multithreaded(trainer, list_of_lists, output_files, num_processes=2, segs_from_prev_stage=None):
@@ -85,7 +79,7 @@ def preprocess_multithreaded(trainer, list_of_lists, output_files, num_processes
     num_processes = min(len(list_of_lists), num_processes)
 
     classes = list(range(1, trainer.num_classes))
-    assert isinstance(trainer, Trainer_acdc) or isinstance(trainer, Trainer_synapse) or isinstance(trainer, Trainer_mcl)
+    assert isinstance(trainer, Trainer_mcl)
     q = Queue(1)
     processes = []
     for i in range(num_processes):

@@ -136,8 +136,8 @@ class DatasetAnalyzer(object):
         size_reduction = OrderedDict()
         for p in self.patient_identifiers:
             props = self.load_properties_of_cropped(p)
-            shape_before_crop = props["original_size_of_raw_data"]  # (241, 144, 144)
-            shape_after_crop = props['size_after_cropping']  # (241, 144, 144)
+            shape_before_crop = props["original_size_of_raw_data"]
+            shape_after_crop = props['size_after_cropping']
             size_red = np.prod(shape_after_crop) / np.prod(shape_before_crop)
             size_reduction[p] = size_red
         return size_reduction
@@ -146,7 +146,7 @@ class DatasetAnalyzer(object):
         all_data = np.load(join(self.folder_with_cropped_data, patient_identifier) + ".npz")['data']
         modality = all_data[modality_id]
         mask = all_data[-1] > 0
-        voxels = list(modality[mask][::10]) # no need to take every voxel
+        voxels = list(modality[mask][::10])
         return voxels
 
     @staticmethod
@@ -167,7 +167,7 @@ class DatasetAnalyzer(object):
             p = Pool(self.num_processes)
 
             results = OrderedDict()
-            for mod_id in range(num_modalities):   # num_modalities=1
+            for mod_id in range(num_modalities):
                 results[mod_id] = OrderedDict()
                 v = p.starmap(self._get_voxels_in_foreground, zip(self.patient_identifiers,
                                                               [mod_id] * len(self.patient_identifiers)))
@@ -175,7 +175,7 @@ class DatasetAnalyzer(object):
                 w = []
                 for iv in v:
                     w += iv
-               #  3.2354338，3.4708693，2.515819，0，125.6942，0.041799870785325766，12.399157285690308
+
                 median, mean, sd, mn, mx, percentile_99_5, percentile_00_5 = self._compute_stats(w)
 
                 local_props = p.map(self._compute_stats, v)
@@ -235,9 +235,9 @@ class DatasetAnalyzer(object):
         dataset_properties['all_sizes'] = sizes
         dataset_properties['all_spacings'] = spacings
         dataset_properties['all_classes'] = all_classes
-        dataset_properties['modalities'] = modalities  # {idx: modality name}
+        dataset_properties['modalities'] = modalities
         dataset_properties['intensityproperties'] = intensityproperties
-        dataset_properties['size_reductions'] = size_reductions  # {patient_id: size_reduction}
+        dataset_properties['size_reductions'] = size_reductions
 
         save_pickle(dataset_properties, join(self.folder_with_cropped_data, "dataset_properties.pkl"))
         return dataset_properties

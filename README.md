@@ -1,19 +1,67 @@
-# E2MISeg
-**UPDATE**
-- (7 20, 2024): ？
+# E2MISeg: Enhancing Edge-aware 3D Medical Image Segmentation via Feature Progressive Co-aggregation
+### **UPDATE**
+
+- (8 15, 2024): upload  code.
+
+
 <hr />
-**Installation**
-Pytorch=2.0.1, CUDA=11.8
+
+### **Installation**
+
+1.sys requirement: Pytorch=2.0.1, CUDA=11.8
+
+2.env Installation: conda env create -f environment.yaml
+
 <hr />
-**Dataset**
+
+### **Dataset**
+
+**Dataset I**
+[ACDC](https://www.creatis.insa-lyon.fr/Challenge/acdc/)
+
+**Dataset II**
+[Brain_tumor](http://medicaldecathlon.com/)
+
+**Dataset III** (MCL)
+
 <hr />
-**Training**
+
+### **Training**
+
+Supplement after receiving
+
 <hr />
-**Evaluation**
+
+### **Evaluation**
+
+1.ACDC
+
+`bash Acdc_run_predict.sh` 
+
+2.BraTS
+
+`bash Tumor_run_predict.sh` 
+
+3.Mcl
+
+`bash Mcl_run_predict.sh` 
+
 <hr />
-**Acknowledgement**
+
+### **Acknowledgement**
+
+Supplement after receiving
+
 <hr />
-Citation
+
+### **Citation**
+
+Supplement after receiving
+
 <hr />
-Contact
+
+### **Contact**
+
+Supplement after receiving
+
 <hr />
