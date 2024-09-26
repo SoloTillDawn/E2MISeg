@@ -73,10 +73,6 @@ def init_(tensor):
 
 
 class TransformerBlock(nn.Module):
-    """
-        Efficient Paired Attention Block, based on: "Shaker et al.,
-        UNETR++: Delving into Efficient and Accurate 3D Medical Image Segmentation"
-        """
     def __init__(self, input_size, hidden_size, proj_size, num_heads=4, qkv_bias=False,
                  channel_attn_drop=0.1, spatial_attn_drop=0.1):
         super().__init__()
