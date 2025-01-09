@@ -26,7 +26,7 @@ class HFRBlock(nn.Module):
 
         self.norm = nn.LayerNorm(hidden_size)
         self.gamma = nn.Parameter(1e-6 * torch.ones(hidden_size), requires_grad=True)
-        self.epa_block = TransformerBlock(input_size=input_size, hidden_size=hidden_size, proj_size=proj_size, num_heads=num_heads,
+        self.cs_block = TransformerBlock(input_size=input_size, hidden_size=hidden_size, proj_size=proj_size, num_heads=num_heads,
                              channel_attn_drop=dropout_rate,spatial_attn_drop=dropout_rate)
         self.conv51 = UnetResBlock(3, hidden_size, hidden_size, kernel_size=3, stride=1, norm_name="batch")
         self.conv52 = UnetResBlock(3, hidden_size, hidden_size, kernel_size=3, stride=1, norm_name="batch")
@@ -45,25 +45,31 @@ class HFRBlock(nn.Module):
             self.pos_embed = nn.Parameter(torch.zeros(1, input_size, hidden_size))
 
     def forward(self, x):
-        x_skip = x
         B, C, H, W, D = x.shape
+
+        # conv
+        conv_skip = x  # tiao ceng
+        conv_m = self.conv31(conv_skip)  # zhu fen zhi
+        conv_m = self.lrelu31(self.norm31(conv_m))
+        conv_m = self.conv32(conv_m)  # zhu fen zhi
+        conv_m = self.lrelu32(self.norm32(conv_m))
+        conv_m = conv_skip + conv_m
+
+        # trans
         x = x.reshape(B, C, H * W * D).permute(0, 2, 1)
         if self.pos_embed is not None:
             x = x + self.pos_embed
-        attn = x + self.gamma * self.epa_block(self.norm(x))
+        attn = x + self.gamma * self.cs_block(self.norm(x),conv_m)
 
-        attn_skip = attn.reshape(B, H, W, D, C).permute(0, 4, 1, 2, 3)
+        attn_skip = attn.reshape(B, H, W, D, C).permute(0, 4, 1, 2, 3)  # (B, C, H, W, D)
         attn = self.conv51(attn_skip)
         attn = self.conv52(attn)
         x = attn_skip + self.conv8(attn)
 
-        conv_skip = x_skip
-        conv_m = self.conv31(conv_skip)
-        conv_m = self.lrelu31(self.norm31(conv_m))
-        conv_m = self.conv32(conv_m)
-        conv_m = self.lrelu32(self.norm32(conv_m))
 
-        x = self.conv9(x + conv_m) + x_skip
+        x = self.conv9(x + conv_skip)
+
+        return x
         return x
 
 class TransformerBlock(nn.Module):
@@ -85,12 +91,23 @@ class TransformerBlock(nn.Module):
         self.out_proj = nn.Linear(hidden_size, int(hidden_size // 2))
         self.out_proj2 = nn.Linear(hidden_size, int(hidden_size // 2))
 
-    def forward(self, x):
+    def forward(self, x, y):
         B, N, C = x.shape
 
         qkvv = self.qkvv(x).reshape(B, N, 4, self.num_heads, C // self.num_heads)
         qkvv = qkvv.permute(2, 0, 3, 1, 4)
-        q_s, k_s, v_CA, v_SA = qkvv[0], qkvv[1], qkvv[2], qkvv[3]
+        y = y.reshape(B,self.num_heads, C // self.num_heads, N).permute(0, 1, 3, 2)
+
+        # cnn_out = q
+        # q_shared, k_shared, v_CA, v_SA = y, qkvv[1], qkvv[2], qkvv[3]
+        # cnn_out = k
+        # q_shared, k_shared, v_CA, v_SA = qkvv[0], y, qkvv[2], qkvv[3]
+        # cnn_out = v
+        # q_shared, k_shared, v_CA, v_SA = qkvv[0], qkvv[1], y, y
+        # cnn_out = q,k
+        q_shared, k_shared, v_CA, v_SA = y, y, qkvv[2], qkvv[3]
+        # cnn_out = q,k,v
+        # q_shared, k_shared, v_CA, v_SA = y, y, y, y
 
         q_s = q_s.transpose(-2, -1)
         k_s = k_s.transpose(-2, -1)
