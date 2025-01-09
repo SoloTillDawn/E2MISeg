@@ -57,7 +57,7 @@ class HFRBlock(nn.Module):
         attn = self.conv51(attn_skip)
         x = attn_skip + self.conv8(attn)
 
-        x = self.conv9(x + convx_skip) 
+        x = self.conv9(x)  + convx_skip
 
         return x
 
