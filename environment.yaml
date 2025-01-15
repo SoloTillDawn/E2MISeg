@@ -109,4 +109,4 @@ dependencies:
       - urllib3==2.2.1
       - wrapt==1.16.0
       - yacs==0.1.8
-prefix: /home/hpc/anaconda3/envs/unetr_pp
+prefix: /home/hpc/anaconda3/envs/e2miseg
