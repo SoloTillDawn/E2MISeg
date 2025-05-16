@@ -27,8 +27,8 @@
 
 **Dataset III** (MCL)
 
-**Dataset II**
-[Brain_tumor](http://medicaldecathlon.com/)
+**Dataset IV**
+[Decathlon-lung](http://medicaldecathlon.com/)
 
 <hr />
 
@@ -51,6 +51,10 @@ Supplement after receiving
 3.Mcl
 
 `bash Mcl_run_predict.sh` 
+
+4.Lung
+
+`bash lung_run_predict.sh` 
 
 <hr />
 
