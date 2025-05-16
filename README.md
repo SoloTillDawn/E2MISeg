@@ -4,6 +4,8 @@
 
 ### **UPDATE**
 
+- (5 16, 2025): Lung-related network architecture and trainer uploaded after sorting(sorry, I am doing internship)
+
 - (8 15, 2024): upload  code.
 
 
