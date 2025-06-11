@@ -23,6 +23,7 @@
 ### **Dataset**
 
 **Dataset I**
+
 The dataset folders for [ACDC](https://www.creatis.insa-lyon.fr/Challenge/acdc/) should be organized as follows:
 ```
 ./DATASET_Acdc/
@@ -40,12 +41,14 @@ The dataset folders for [ACDC](https://www.creatis.insa-lyon.fr/Challenge/acdc/)
 ```
 
 **Dataset II**
-[Brain_tumor](http://medicaldecathlon.com/)
+
+The format of [Brain_tumor](http://medicaldecathlon.com/) dataset is the same as ACDC
 
 **Dataset III** (MCL)
 
 **Dataset IV**
-[Decathlon-lung](http://medicaldecathlon.com/)
+
+The format of [Decathlon-lung](http://medicaldecathlon.com/) dataset is the same as ACDC
 
 <hr />
 
