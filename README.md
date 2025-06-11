@@ -22,7 +22,21 @@
 ### **Dataset**
 
 **Dataset I**
-[ACDC](https://www.creatis.insa-lyon.fr/Challenge/acdc/)
+The dataset folders for [ACDC](https://www.creatis.insa-lyon.fr/Challenge/acdc/) should be organized as follows:
+```
+./DATASET_Acdc/
+  ├── e2miseg_raw/
+      ├── e2miseg_raw_data/
+           ├── Task01_ACDC/
+              ├── imagesTr/
+              ├── imagesTs/
+              ├── labelsTr/
+              ├── labelsTs/
+              ├── dataset.json
+           ├── Task001_ACDC
+       ├── e2miseg_cropped_data/
+           ├── Task001_ACDC
+```
 
 **Dataset II**
 [Brain_tumor](http://medicaldecathlon.com/)
