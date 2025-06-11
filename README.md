@@ -13,9 +13,10 @@
 
 ### **Installation**
 
+```
 1.sys requirement: Pytorch=2.0.1, CUDA=11.8
-
 2.env Installation: conda env create -f environment.yaml
+```
 
 <hr />
 
@@ -57,21 +58,21 @@ Supplement after receiving
 ### **Evaluation**
 
 1.ACDC
-
+```
 `bash Acdc_run_predict.sh` 
-
+```
 2.BraTS
-
+```
 `bash Tumor_run_predict.sh` 
-
+```
 3.Mcl
-
+```
 `bash Mcl_run_predict.sh` 
-
+```
 4.Lung
-
+```
 `bash lung_run_predict.sh` 
-
+```
 <hr />
 
 ### **Acknowledgement**
